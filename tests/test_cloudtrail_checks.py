@@ -12,9 +12,7 @@ from cloudguard.checks.cloudtrail_checks import (
 from cloudguard.ingest import AccountSnapshot, CloudTrailEvent
 
 
-def _ctx(
-    snapshot: AccountSnapshot, events: list[CloudTrailEvent]
-) -> AuditContext:
+def _ctx(snapshot: AccountSnapshot, events: list[CloudTrailEvent]) -> AuditContext:
     return AuditContext(snapshot=snapshot, events=tuple(events))
 
 
@@ -45,9 +43,7 @@ def test_unauthorized_burst(vulnerable_snapshot, sample_events) -> None:
 
 
 def test_sensitive_control_plane_changes(vulnerable_snapshot, sample_events) -> None:
-    findings = list(
-        sensitive_control_plane_changes(_ctx(vulnerable_snapshot, sample_events))
-    )
+    findings = list(sensitive_control_plane_changes(_ctx(vulnerable_snapshot, sample_events)))
     names = {f.evidence["event_name"] for f in findings}
     assert "StopLogging" in names
     assert "AuthorizeSecurityGroupIngress" in names

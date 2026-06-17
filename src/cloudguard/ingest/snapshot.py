@@ -46,9 +46,7 @@ class IamUser:
             name=str(data["name"]),
             console_access=bool(data.get("console_access", False)),
             mfa_enabled=bool(data.get("mfa_enabled", False)),
-            access_keys=tuple(
-                AccessKey.from_dict(k) for k in data.get("access_keys", [])
-            ),
+            access_keys=tuple(AccessKey.from_dict(k) for k in data.get("access_keys", [])),
             attached_policy_arns=tuple(data.get("attached_policy_arns", [])),
         )
 
@@ -143,9 +141,7 @@ class SecurityGroup:
         return cls(
             group_id=str(data["group_id"]),
             name=str(data.get("name", "")),
-            ingress=tuple(
-                SecurityGroupRule.from_dict(r) for r in data.get("ingress", [])
-            ),
+            ingress=tuple(SecurityGroupRule.from_dict(r) for r in data.get("ingress", [])),
         )
 
 
@@ -215,9 +211,7 @@ class AccountSnapshot:
             account_id=account_id,
             generated_at=str(data.get("generated_at", "")),
             root_account=RootAccount.from_dict(data.get("root_account", {})),
-            password_policy=(
-                PasswordPolicy.from_dict(policy_raw) if policy_raw else None
-            ),
+            password_policy=(PasswordPolicy.from_dict(policy_raw) if policy_raw else None),
             iam_users=tuple(IamUser.from_dict(u) for u in data.get("iam_users", [])),
             managed_policies=tuple(
                 ManagedPolicy.from_dict(p) for p in data.get("managed_policies", [])

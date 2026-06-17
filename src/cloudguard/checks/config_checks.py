@@ -215,9 +215,7 @@ def no_wildcard_admin_policy(ctx: AuditContext) -> Iterator[Finding]:
     cis_control="3.1",
 )
 def multi_region_trail_logging(ctx: AuditContext) -> Iterator[Finding]:
-    has_active_multiregion = any(
-        t.is_multi_region and t.is_logging for t in ctx.snapshot.trails
-    )
+    has_active_multiregion = any(t.is_multi_region and t.is_logging for t in ctx.snapshot.trails)
     if not has_active_multiregion:
         yield Finding(
             check_id="CT-001",
@@ -251,8 +249,7 @@ def trail_log_validation(ctx: AuditContext) -> Iterator[Finding]:
                 resource=f"cloudtrail:trail/{trail.name}",
                 cis_control="3.2",
                 description=(
-                    "Log file validation lets you detect tampering with delivered "
-                    "log files."
+                    "Log file validation lets you detect tampering with delivered log files."
                 ),
                 remediation="Enable log file validation on the trail.",
                 evidence={"log_file_validation": False},
@@ -353,8 +350,7 @@ def s3_versioning(ctx: AuditContext) -> Iterator[Finding]:
                     "and is required for cross-region replication (data redundancy)."
                 ),
                 remediation=(
-                    "Enable versioning; see the replicated buckets in "
-                    "terraform/modules/backup."
+                    "Enable versioning; see the replicated buckets in terraform/modules/backup."
                 ),
                 evidence={"versioning": False},
             )
@@ -376,10 +372,7 @@ def no_world_open_admin_ports(ctx: AuditContext) -> Iterator[Finding]:
                 if rule.covers_port(port):
                     yield Finding(
                         check_id="EC2-001",
-                        title=(
-                            f"Security group '{group.group_id}' allows {label} "
-                            f"from 0.0.0.0/0"
-                        ),
+                        title=(f"Security group '{group.group_id}' allows {label} from 0.0.0.0/0"),
                         severity=Severity.HIGH,
                         resource=f"ec2:security-group/{group.group_id}",
                         cis_control="5.2",

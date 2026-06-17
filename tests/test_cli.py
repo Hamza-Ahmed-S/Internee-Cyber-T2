@@ -60,9 +60,7 @@ def test_cli_fail_on_high_returns_nonzero() -> None:
 
 
 def test_cli_fail_on_clean_account_returns_zero() -> None:
-    code = main(
-        ["audit", "--snapshot", str(HARDENED), "--format", "json", "--fail-on", "LOW"]
-    )
+    code = main(["audit", "--snapshot", str(HARDENED), "--format", "json", "--fail-on", "LOW"])
     assert code == 0
 
 
