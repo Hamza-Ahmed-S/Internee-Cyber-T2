@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 
-from cloudguard.ingest import AccountSnapshot, CloudTrailEvent
 from cloudguard.engine import run_audit
+from cloudguard.ingest import AccountSnapshot, CloudTrailEvent
 from cloudguard.report import render_console, render_json, render_markdown
 
 
