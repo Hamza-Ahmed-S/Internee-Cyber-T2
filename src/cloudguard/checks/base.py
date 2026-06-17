@@ -9,9 +9,8 @@ report them without importing each module by hand.
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass, field
-from typing import Callable
 
 from cloudguard.ingest import AccountSnapshot, CloudTrailEvent
 from cloudguard.models import CheckMeta, Finding, Severity
