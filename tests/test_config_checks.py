@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
+
 from cloudguard.checks import AuditContext
 from cloudguard.checks.config_checks import (
     access_keys_rotated,
@@ -20,9 +22,13 @@ from cloudguard.checks.config_checks import (
     trail_log_validation,
 )
 from cloudguard.ingest import AccountSnapshot
+from cloudguard.models import Finding
 
 
-def _ids(check, snapshot: AccountSnapshot) -> list[str]:
+def _ids(
+    check: Callable[[AuditContext], Iterable[Finding]],
+    snapshot: AccountSnapshot,
+) -> list[str]:
     ctx = AuditContext(snapshot=snapshot)
     return [f.check_id for f in check(ctx)]
 
@@ -106,6 +112,9 @@ def test_world_open_admin_ports(vulnerable_snapshot: AccountSnapshot) -> None:
     assert ports == {22, 3389}
 
 
-def test_ebs_default_encryption(vulnerable_snapshot, hardened_snapshot) -> None:
+def test_ebs_default_encryption(
+    vulnerable_snapshot: AccountSnapshot,
+    hardened_snapshot: AccountSnapshot,
+) -> None:
     assert _ids(ebs_default_encryption, vulnerable_snapshot) == ["EC2-002"]
     assert _ids(ebs_default_encryption, hardened_snapshot) == []

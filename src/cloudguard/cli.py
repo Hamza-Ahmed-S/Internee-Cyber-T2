@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from cloudguard import __version__
@@ -22,7 +22,7 @@ from cloudguard.ingest.snapshot import SnapshotError
 from cloudguard.models import AuditResult, Severity
 from cloudguard.report import render_console, render_json, render_markdown
 
-_RENDERERS = {
+_RENDERERS: dict[str, Callable[[AuditResult], str]] = {
     "console": render_console,
     "json": render_json,
     "markdown": render_markdown,
@@ -76,7 +76,8 @@ def _render(result: AuditResult, fmt: str) -> str:
     if fmt == "console":
         # Disable colour when writing to a file/pipe; render_console auto-detects.
         return render_console(result)
-    return _RENDERERS[fmt](result)
+    renderer = _RENDERERS[fmt]
+    return renderer(result)
 
 
 def _exit_code(result: AuditResult, fail_on: str | None) -> int:

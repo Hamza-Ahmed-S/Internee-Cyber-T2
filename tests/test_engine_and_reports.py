@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import json
 
+from cloudguard.ingest import AccountSnapshot, CloudTrailEvent
 from cloudguard.engine import run_audit
 from cloudguard.report import render_console, render_json, render_markdown
 
 
-def test_engine_runs_all_registered_checks(vulnerable_snapshot, sample_events) -> None:
+def test_engine_runs_all_registered_checks(
+    vulnerable_snapshot: AccountSnapshot,
+    sample_events: list[CloudTrailEvent],
+) -> None:
     result = run_audit(vulnerable_snapshot, sample_events)
     # The vulnerable account should produce many findings and a poor grade.
     assert result.checks_run >= 18
@@ -18,7 +22,7 @@ def test_engine_runs_all_registered_checks(vulnerable_snapshot, sample_events) -
     assert result.highest_severity().label == "CRITICAL"
 
 
-def test_engine_clean_account_passes(hardened_snapshot) -> None:
+def test_engine_clean_account_passes(hardened_snapshot: AccountSnapshot) -> None:
     # No events => no behavioural findings; hardened config => no config findings.
     result = run_audit(hardened_snapshot, [])
     assert result.findings == []
@@ -26,14 +30,17 @@ def test_engine_clean_account_passes(hardened_snapshot) -> None:
     assert result.grade == "A"
 
 
-def test_engine_without_events(vulnerable_snapshot) -> None:
+def test_engine_without_events(vulnerable_snapshot: AccountSnapshot) -> None:
     result = run_audit(vulnerable_snapshot)
     # Behavioural checks contribute nothing without events.
     behavioural = [f for f in result.findings if f.check_id.startswith("CTA-")]
     assert behavioural == []
 
 
-def test_json_report_is_valid_json(vulnerable_snapshot, sample_events) -> None:
+def test_json_report_is_valid_json(
+    vulnerable_snapshot: AccountSnapshot,
+    sample_events: list[CloudTrailEvent],
+) -> None:
     result = run_audit(vulnerable_snapshot, sample_events)
     payload = json.loads(render_json(result))
     assert payload["account_id"] == "123456789012"
@@ -44,7 +51,10 @@ def test_json_report_is_valid_json(vulnerable_snapshot, sample_events) -> None:
     assert severities[0] == "CRITICAL"
 
 
-def test_markdown_report_contains_findings(vulnerable_snapshot, sample_events) -> None:
+def test_markdown_report_contains_findings(
+    vulnerable_snapshot: AccountSnapshot,
+    sample_events: list[CloudTrailEvent],
+) -> None:
     result = run_audit(vulnerable_snapshot, sample_events)
     md = render_markdown(result, generated_at="2026-06-11 12:00 UTC")
     assert "# CloudGuard Security Audit Report" in md
@@ -53,13 +63,16 @@ def test_markdown_report_contains_findings(vulnerable_snapshot, sample_events) -
     assert "2026-06-11 12:00 UTC" in md
 
 
-def test_markdown_clean_account(hardened_snapshot) -> None:
+def test_markdown_clean_account(hardened_snapshot: AccountSnapshot) -> None:
     result = run_audit(hardened_snapshot, [])
     md = render_markdown(result)
     assert "No findings" in md
 
 
-def test_console_report_no_color(vulnerable_snapshot, sample_events) -> None:
+def test_console_report_no_color(
+    vulnerable_snapshot: AccountSnapshot,
+    sample_events: list[CloudTrailEvent],
+) -> None:
     result = run_audit(vulnerable_snapshot, sample_events)
     text = render_console(result, color=False)
     assert "\033[" not in text  # no ANSI codes when colour disabled
