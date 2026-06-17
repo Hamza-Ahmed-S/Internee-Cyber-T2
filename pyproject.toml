@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloudguard"
+version = "1.0.0"
+description = "AWS cloud security posture auditing & compliance toolkit for Internee.pk"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Hamza Ahmed Siddiqui", email = "hamzaahmedsiddiqui03@gmail.com" }]
+keywords = ["aws", "security", "cis-benchmark", "cloudtrail", "compliance", "audit"]
+# Core engine is intentionally dependency-free (standard library only) so it
+# runs anywhere with zero install friction and no compiled-binary requirements.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+
+[project.scripts]
+cloudguard = "cloudguard.cli:main"
+
+[project.urls]
+Homepage = "https://internee.pk"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cloudguard = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
+pythonpath = ["src"]
+
+[tool.ruff]
+src = ["src", "tests"]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PTH", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cloudguard"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src", "tests"]
+mypy_path = "src"
+warn_unused_ignores = true
+disallow_untyped_decorators = false

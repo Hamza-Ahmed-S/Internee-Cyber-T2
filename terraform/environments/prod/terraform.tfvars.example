@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars and adjust. Bucket names must be globally unique.
+
+primary_region = "us-east-1"
+replica_region = "eu-west-1"
+
+name_prefix         = "internee"
+data_bucket_name    = "internee-prod-data-CHANGE-ME"
+replica_bucket_name = "internee-prod-data-replica-CHANGE-ME"
+
+waf_rate_limit = 2000
+
+# ARNs of the ALB / API Gateway stages to protect:
+# associated_resource_arns = ["arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/internee/abc123"]

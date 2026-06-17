@@ -1,0 +1,89 @@
+{
+  "account_id": "123456789012",
+  "generated_at": "2026-06-11T12:00:00Z",
+  "description": "Internee.pk account after applying the terraform remediation modules. Expected to pass all checks.",
+  "regions": ["us-east-1", "eu-west-1"],
+  "ebs_encryption_by_default": true,
+  "root_account": {
+    "mfa_enabled": true,
+    "hardware_mfa": true,
+    "active_access_keys": 0
+  },
+  "password_policy": {
+    "minimum_length": 14,
+    "require_symbols": true,
+    "require_numbers": true,
+    "require_uppercase": true,
+    "require_lowercase": true,
+    "max_age_days": 90,
+    "reuse_prevention": 24
+  },
+  "iam_users": [
+    {
+      "name": "alice-admin",
+      "console_access": true,
+      "mfa_enabled": true,
+      "access_keys": [{ "active": true, "last_rotated_days": 14 }],
+      "attached_policy_arns": ["arn:aws:iam::123456789012:policy/break-glass-admin"]
+    },
+    {
+      "name": "bob-ci",
+      "console_access": false,
+      "mfa_enabled": false,
+      "access_keys": [{ "active": true, "last_rotated_days": 30 }],
+      "attached_policy_arns": ["arn:aws:iam::123456789012:policy/ci-deploy"]
+    }
+  ],
+  "managed_policies": [
+    {
+      "name": "ci-deploy",
+      "arn": "arn:aws:iam::123456789012:policy/ci-deploy",
+      "document": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": ["s3:PutObject", "s3:GetObject"],
+            "Resource": "arn:aws:s3:::internee-artifacts/*"
+          }
+        ]
+      }
+    }
+  ],
+  "trails": [
+    {
+      "name": "org-trail",
+      "is_multi_region": true,
+      "is_logging": true,
+      "log_file_validation": true,
+      "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/abcd-1234"
+    }
+  ],
+  "s3_buckets": [
+    {
+      "name": "internee-user-uploads",
+      "region": "us-east-1",
+      "is_public": false,
+      "public_access_block": true,
+      "encryption": "aws:kms",
+      "versioning": true
+    },
+    {
+      "name": "internee-db-backups",
+      "region": "us-east-1",
+      "is_public": false,
+      "public_access_block": true,
+      "encryption": "aws:kms",
+      "versioning": true
+    }
+  ],
+  "security_groups": [
+    {
+      "group_id": "sg-0a1b2c3d",
+      "name": "web-tier",
+      "ingress": [
+        { "protocol": "tcp", "from_port": 443, "to_port": 443, "cidr": "0.0.0.0/0" }
+      ]
+    }
+  ]
+}

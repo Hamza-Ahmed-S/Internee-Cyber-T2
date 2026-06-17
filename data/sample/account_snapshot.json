@@ -1,0 +1,122 @@
+{
+  "account_id": "123456789012",
+  "generated_at": "2026-06-11T09:00:00Z",
+  "description": "Internee.pk sample AWS account snapshot with intentional misconfigurations for demonstration.",
+  "regions": ["us-east-1", "eu-west-1", "ap-south-1"],
+  "ebs_encryption_by_default": false,
+  "root_account": {
+    "mfa_enabled": false,
+    "hardware_mfa": false,
+    "active_access_keys": 1
+  },
+  "password_policy": {
+    "minimum_length": 8,
+    "require_symbols": false,
+    "require_numbers": true,
+    "require_uppercase": true,
+    "require_lowercase": true,
+    "max_age_days": null,
+    "reuse_prevention": null
+  },
+  "iam_users": [
+    {
+      "name": "alice-admin",
+      "console_access": true,
+      "mfa_enabled": true,
+      "access_keys": [{ "active": true, "last_rotated_days": 14 }],
+      "attached_policy_arns": ["arn:aws:iam::aws:policy/AdministratorAccess"]
+    },
+    {
+      "name": "bob-ci",
+      "console_access": false,
+      "mfa_enabled": false,
+      "access_keys": [{ "active": true, "last_rotated_days": 410 }],
+      "attached_policy_arns": ["arn:aws:iam::123456789012:policy/ci-deploy"]
+    },
+    {
+      "name": "carol-ops",
+      "console_access": true,
+      "mfa_enabled": false,
+      "access_keys": [],
+      "attached_policy_arns": ["arn:aws:iam::123456789012:policy/legacy-full-access"]
+    }
+  ],
+  "managed_policies": [
+    {
+      "name": "legacy-full-access",
+      "arn": "arn:aws:iam::123456789012:policy/legacy-full-access",
+      "document": {
+        "Version": "2012-10-17",
+        "Statement": [
+          { "Effect": "Allow", "Action": "*", "Resource": "*" }
+        ]
+      }
+    },
+    {
+      "name": "ci-deploy",
+      "arn": "arn:aws:iam::123456789012:policy/ci-deploy",
+      "document": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": ["s3:PutObject", "s3:GetObject"],
+            "Resource": "arn:aws:s3:::internee-artifacts/*"
+          }
+        ]
+      }
+    }
+  ],
+  "trails": [
+    {
+      "name": "org-trail",
+      "is_multi_region": true,
+      "is_logging": true,
+      "log_file_validation": false,
+      "kms_key_id": null
+    }
+  ],
+  "s3_buckets": [
+    {
+      "name": "internee-public-website",
+      "region": "us-east-1",
+      "is_public": true,
+      "public_access_block": false,
+      "encryption": "AES256",
+      "versioning": false
+    },
+    {
+      "name": "internee-user-uploads",
+      "region": "us-east-1",
+      "is_public": false,
+      "public_access_block": true,
+      "encryption": null,
+      "versioning": false
+    },
+    {
+      "name": "internee-db-backups",
+      "region": "us-east-1",
+      "is_public": false,
+      "public_access_block": true,
+      "encryption": "aws:kms",
+      "versioning": true
+    }
+  ],
+  "security_groups": [
+    {
+      "group_id": "sg-0a1b2c3d",
+      "name": "web-tier",
+      "ingress": [
+        { "protocol": "tcp", "from_port": 443, "to_port": 443, "cidr": "0.0.0.0/0" },
+        { "protocol": "tcp", "from_port": 22, "to_port": 22, "cidr": "0.0.0.0/0" }
+      ]
+    },
+    {
+      "group_id": "sg-0e4f5a6b",
+      "name": "bastion",
+      "ingress": [
+        { "protocol": "tcp", "from_port": 3389, "to_port": 3389, "cidr": "0.0.0.0/0" }
+      ]
+    }
+  ]
+}
